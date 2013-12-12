@@ -16,6 +16,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind(('', 4455))
 sock.listen(5)
 
+
 class AcceptConnectionThread(Thread):
 
     def run(self):
@@ -24,6 +25,7 @@ class AcceptConnectionThread(Thread):
             login_thread = LoginThread(conn, addr)
             login_thread.start()
 
+
 class LoginThread(Thread):
 
     def __init__(self, conn, addr):
@@ -31,12 +33,13 @@ class LoginThread(Thread):
         self.conn = conn
         self.addr = addr
 
-
     def run(self):
         data_json = self.conn.recv(1024)
         if data_json:
             data = json.loads(data_json.decode())
-            if data['username'] == "testname" and data['password'] == "iminspace":
+            if data['username'] == "testname" \
+                        and data['password'] == "iminspace":
+
                 client = {'conn': self.conn, 'addr': self.addr}
                 clients.append(client)
                 client_id = clients.index(client)
@@ -69,6 +72,7 @@ class ReceiveThread(Thread):
 
                 self._stop()
 
+
 def tick():
     for client in clients:
         try:
@@ -79,13 +83,14 @@ def tick():
 
             clients.remove(client)
 
+
 def shutdown():
     for client in clients:
         client['conn'].send("shutdown".encode())
     sock.shutdown
 
 try:
-    accept_connection_thread = AcceptConnectionThread();
+    accept_connection_thread = AcceptConnectionThread()
     accept_connection_thread.start()
 
     while not stop_requested:
