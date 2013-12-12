@@ -57,16 +57,27 @@ class ReceiveThread(Thread):
 
     def run(self):
         while not stop_requested:
-            data = self.conn.recv(1024)
-            if not data:
-                clients.pop(self.client_id)
-                break
-            print(data)
+            try:
 
+                data = self.conn.recv(1024)
+                if not data:
+                    clients.pop(self.client_id)
+                    break
+                print(data)
+
+            except socket.error:
+
+                self._stop()
 
 def tick():
     for client in clients:
-        client['conn'].send("testy".encode())
+        try:
+
+            client['conn'].send("testy".encode())
+
+        except socket.error:
+
+            clients.remove(client)
 
 def shutdown():
     for client in clients:
