@@ -25,7 +25,7 @@ class Core(object):
     def _tick(self):
         for client in self.server.clients:
             try:
-                client['conn'].send("testy".encode())
+                client.send("testy")
 
             except socket.error:
                 self.server.clients.remove(client)

@@ -25,5 +25,5 @@ class Server(object):
     def stop(self):
         self.stop_requested = True
         for client in self.clients:
-            client['conn'].send("shutdown".encode())
+            client.send("shutdown")
         self.socket.close()

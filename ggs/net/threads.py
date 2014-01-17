@@ -5,8 +5,8 @@ Created on 13.12.2013
 """
 
 import json
-import socket
 from threading import Thread
+from ggs.client import Client
 
 
 class AcceptConnectionThread(Thread):
@@ -37,36 +37,9 @@ class LoginThread(Thread):
             if data['username'] == "testname" \
                         and data['password'] == "iminspace":
 
-                client = {'conn': self.conn, 'addr': self.addr}
+                client = Client(self.conn, self.addr)
                 self.server.clients.append(client)
-                client_id = self.server.clients.index(client)
                 self.conn.send("connected".encode())
-                receive_thread = ReceiveThread(self.server,
-                                               self.conn,
-                                               self.addr,
-                                               client_id)
-                receive_thread.start()
             else:
                 self.conn.send("loginerror".encode())
 
-
-class ReceiveThread(Thread):
-
-    def __init__(self, server, conn, addr, client_id):
-        Thread.__init__(self)
-        self.server = server
-        self.conn = conn
-        self.addr = addr
-        self.client_id = client_id
-
-    def run(self):
-        while True:
-            try:
-                data = self.conn.recv(1024)
-                if not data:
-                    self.server.clients.pop(self.client_id)
-                    break
-                print(data)
-
-            except socket.error:
-                self._stop()
