@@ -1,8 +1,9 @@
-'''
+"""
 Created on 13.12.2013
 
 @author: udakak
-'''
+"""
+
 import json
 import socket
 from threading import Thread
