@@ -24,11 +24,8 @@ class Core(object):
 
     def _tick(self):
         for client in self.server.clients:
-            try:
-                client.send("testy")
-
-            except socket.error:
-                self.server.clients.remove(client)
+            print("testy")
+            # TODO: actually do something
 
     def _tick_loop(self):
         while not self.stop_requested:
