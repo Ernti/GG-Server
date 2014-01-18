@@ -3,6 +3,7 @@ Created on 13.12.2013
 
 @author: u
 """
+import json
 import socket
 
 from ggs.net.threads import AcceptConnectionThread
@@ -27,3 +28,13 @@ class Server(object):
         for client in self.clients:
             client.send("shutdown")
         self.socket.close()
+
+    def player_action(self, message, acting_client):
+        if message['type'] == 'playermoved':
+            # TODO: check if in range
+            for client in self.clients:
+                if client != acting_client:
+                    client.send(json.dumps({'type': 'spaceobjectmoved',
+                                            'soid': self.clients.index(acting_client),
+                                            'x': message['x'],
+                                            'y': message['y']}))

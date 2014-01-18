@@ -37,9 +37,9 @@ class LoginThread(Thread):
             if data['username'] == "testname" \
                         and data['password'] == "iminspace":
 
-                client = Client(self.conn, self.addr)
+                client = Client(self.server, self.conn, self.addr)
                 self.server.clients.append(client)
-                self.conn.send("connected".encode())
+                self.conn.send("{'type': 'connected'}".encode())
             else:
-                self.conn.send("loginerror".encode())
+                self.conn.send("{'type': 'loginerror'}".encode())
 

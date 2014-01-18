@@ -1,3 +1,4 @@
+import json
 import socket
 from threading import Thread
 
@@ -13,7 +14,7 @@ class ReceiveThread(Thread):
             try:
                 data = self.client.conn.recv(1024)
                 if data:
-                    print(data)
+                    self.client.handle(json.loads(data.decode()))
 
             except socket.error:
                 self.client.alive = False
@@ -36,7 +37,8 @@ class SendThread(Thread):
 
 class Client(object):
 
-    def __init__(self, conn, addr):
+    def __init__(self, server, conn, addr):
+        self.server = server
         self.conn = conn
         self.addr = addr
         self.alive = True
@@ -48,3 +50,8 @@ class Client(object):
 
     def send(self, message):
         self.message_queue.append(message)
+
+    def handle(self, message):
+        if message['type'] == 'playermoved':
+            self.server.player_action(message, self)
+        print(message)
