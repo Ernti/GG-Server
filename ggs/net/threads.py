@@ -39,7 +39,7 @@ class LoginThread(Thread):
 
                 client = Client(self.server, self.conn, self.addr)
                 self.server.clients.append(client)
-                self.conn.send("{'type': 'connected'}".encode())
+                self.conn.send(json.dumps({'type': 'connected'}).encode())
             else:
-                self.conn.send("{'type': 'loginerror'}".encode())
+                self.conn.send(json.dumps({'type': 'loginerror'}).encode())
 
