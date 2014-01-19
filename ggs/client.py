@@ -15,6 +15,8 @@ class ReceiveThread(Thread):
                 data = self.client.conn.recv(1024)
                 if data:
                     self.client.handle(json.loads(data.decode()))
+                else:
+                    self.client.alive = False
 
             except socket.error:
                 self.client.alive = False

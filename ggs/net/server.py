@@ -33,7 +33,7 @@ class Server(object):
         if message['type'] == 'playermoved':
             # TODO: check if in range
             for client in self.clients:
-                if client != acting_client:
+                if client is not acting_client:
                     client.send(json.dumps({'type': 'spaceobjectmoved',
                                             'soid': self.clients.index(acting_client),
                                             'x': message['x'],

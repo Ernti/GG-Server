@@ -25,6 +25,8 @@ class Core(object):
     def _tick(self):
         for client in self.server.clients:
             print("testy")
+            if not client.alive:
+                self.server.clients.remove(client)
             # TODO: actually do something
 
     def _tick_loop(self):
