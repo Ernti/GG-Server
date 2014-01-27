@@ -37,4 +37,14 @@ class Server(object):
                     client.send(json.dumps({'type': 'spaceobjectmoved',
                                             'soid': self.clients.index(acting_client),
                                             'x': message['x'],
-                                            'y': message['y']}))
+                                            'y': message['y'],
+                                            'scale_x': message['scale_x'],
+                                            'scale_y': message['scale_y'],
+                                            'r': message['r'],
+                                            'speed': message['speed']}))
+
+        if message['type'] == 'removespaceobject':
+            # TODO: check if in range
+            for client in self.clients:
+                if client is not acting_client:
+                    client.send(json.dumps({'type': 'removespaceobject', 'soid': self.clients.index(acting_client)}))

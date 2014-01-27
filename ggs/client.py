@@ -16,9 +16,11 @@ class ReceiveThread(Thread):
                 if data:
                     self.client.handle(json.loads(data.decode()))
                 else:
+                    self.client.handle({'type': 'removespaceobject'})
                     self.client.alive = False
 
             except socket.error:
+                self.client.handle({'type': 'removespaceobject'})
                 self.client.alive = False
 
 
@@ -40,5 +42,7 @@ class Client(object):
 
     def handle(self, message):
         if message['type'] == 'playermoved':
+            self.server.player_action(message, self)
+        if message['type'] == 'removespaceobject':
             self.server.player_action(message, self)
         print(message)
