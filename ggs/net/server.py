@@ -48,3 +48,8 @@ class Server(object):
             for client in self.clients:
                 if client is not acting_client:
                     client.send(json.dumps({'type': 'removespaceobject', 'soid': self.clients.index(acting_client)}))
+
+        if message['type'] == 'sendchatmessage':
+            for client in self.clients:
+                if client is not acting_client:
+                    client.send(json.dumps({'type': 'sendchatmessage', 'message': message['message']}))

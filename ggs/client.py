@@ -34,6 +34,8 @@ class Client(object):
         self.receive_thread = ReceiveThread(self)
         self.receive_thread.start()
 
+        self.server.player_action({'type': 'sendchatmessage', 'message': 'New Player connected!'}, self)
+
     def send(self, message):
         try:
             self.conn.send(message.encode())
@@ -44,5 +46,7 @@ class Client(object):
         if message['type'] == 'playermoved':
             self.server.player_action(message, self)
         if message['type'] == 'removespaceobject':
+            self.server.player_action(message, self)
+        if message['type'] == 'sendchatmessage':
             self.server.player_action(message, self)
         print(message)
