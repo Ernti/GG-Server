@@ -43,8 +43,7 @@ class Server(object):
                                             'r': message['r'],
                                             'speed': message['speed'],
                                             'target': message['target'],
-                                            'mass': message['mass'],
-                                            'thrust': message['thrust']}))
+                                            'engine': message['engine']}))
 
         if message['type'] == 'removespaceobject':
             # TODO: check if in range
