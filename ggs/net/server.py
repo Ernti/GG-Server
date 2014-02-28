@@ -57,12 +57,19 @@ class Server(object):
                     client.send(json.dumps({'type': 'sendchatmessage', 'message': message['message']}))
 
         if message['type'] == 'playershot':
+            print(message)
             for client in self.clients:
-                client.send(json.dumps({'type': 'playershot',
-                                        'soid': message['soid'],
-                                        'x': message['x'],
-                                        'y': message['y'],
-                                        'scale_x': message['scale_x'],
-                                        'scale_y': message['scale_y'],
-                                        'r': message['r'],
-                                        'speed': message['speed']}))
+                if client is acting_client:
+                    client.send(json.dumps({'type': 'playershot',
+                                            'soid': -1,
+                                            'x': message['x'],
+                                            'y': message['y'],
+                                            'r': message['r'],
+                                            'speed': message['speed']}))
+                else:
+                    client.send(json.dumps({'type': 'playershot',
+                                            'soid': self.clients.index(acting_client),
+                                            'x': message['x'],
+                                            'y': message['y'],
+                                            'r': message['r'],
+                                            'speed': message['speed']}))

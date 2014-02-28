@@ -54,4 +54,6 @@ class Client(object):
             self.server.player_action(message, self)
         if message['type'] == 'sendchatmessage':
             self.server.player_action(message, self)
+        if message['type'] == 'playershot':
+            self.server.player_action(message, self)
         #print(message)
