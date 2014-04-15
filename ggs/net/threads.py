@@ -6,6 +6,7 @@ Created on 13.12.2013
 
 import json
 from threading import Thread
+import re
 
 from ggs.net.client import Client
 from ggs.player import Player
@@ -33,20 +34,24 @@ class LoginThread(Thread):
         self.addr = addr
 
     def run(self):
-        data_json = self.conn.recv(1024)
-        if data_json:
-            data = json.loads(data_json.decode())
-            if data['password'] == "iminspace":
-                client = Client(self.server, self.conn, self.addr)
-                client.subscribe(self.server.event_handler.handle)
-                player = Player()
-                player.ship.subscribe(self.server.event_handler.handle)
-                client.player = player
+        data = self.conn.recv(1024)
+        for match_group in re.finditer("\(([^()]+)\)", data.decode()):
 
-                # Player will already exist at this point
-                self.server.player.append(player)
+            data_json = json.loads(match_group.group(1))
 
-                client.fire(type='connected')
-            else:
-                self.conn.send(('(' + json.dumps({'type': 'loginerror'}) + ')').encode())
+            if data_json:
+                data = json.loads(data_json.decode())
+                if data['password'] == "iminspace":
+                    client = Client(self.server, self.conn, self.addr)
+                    client.subscribe(self.server.event_handler.handle)
+                    player = Player()
+                    player.ship.subscribe(self.server.event_handler.handle)
+                    client.player = player
+
+                    # Player will already exist at this point
+                    self.server.player.append(player)
+
+                    client.fire(type='connected')
+                else:
+                    self.conn.send(('(' + json.dumps({'type': 'loginerror'}) + ')').encode())
 
