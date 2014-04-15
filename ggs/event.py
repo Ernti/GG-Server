@@ -40,7 +40,7 @@ class EventHandler(object):
             event.source.send({'type': 'connected'})
             for client in self.server.clients:
                 if client is not event.source:
-                    client.send({'type': 'newspaceobject',
+                    event.source.send({'type': 'newspaceobject',
                                  'soid': client.player.ship.soid})
 
         if event.type == 'disconnected':
