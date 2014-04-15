@@ -25,6 +25,7 @@ class EventHandler(object):
     def handle(self, event):
         if event.type == 'move':
             self.server.broadcast({'type': 'spaceobjectmoved',
+                                   'soid': event.source.soid,
                                    'x': event.source.x,
                                    'y': event.source.y,
                                    'r': event.source.r})
