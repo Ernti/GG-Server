@@ -38,7 +38,6 @@ class LoginThread(Thread):
         for match_group in re.finditer("\(([^()]+)\)", data.decode()):
 
             data_json = json.loads(match_group.group(1))
-
             if data_json['password'] == "iminspace":
                 client = Client(self.server, self.conn, self.addr)
                 client.subscribe(self.server.event_handler.handle)

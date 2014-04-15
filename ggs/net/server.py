@@ -1,9 +1,9 @@
 """
 Created on 13.12.2013
 
-@author: u
+@author: udakak
 """
-import json
+
 import socket
 from ggs.event import EventHandler
 
@@ -31,9 +31,10 @@ class Server(object):
             client.send("shutdown")
         self.socket.close()
 
-    def broadcast(self, message):
+    def broadcast(self, message, filter = None):
         for client in self.clients:
-            client.send(message)
+            if client is not filter:
+                client.send(message)
 
     def handle(self, message, client):
         if message['type'] == 'playermoved':

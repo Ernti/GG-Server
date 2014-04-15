@@ -25,6 +25,7 @@ class EventHandler(object):
     def handle(self, event):
         if event.type == 'move':
             self.server.broadcast({'type': 'spaceobjectmoved',
+                                   'soid': event.source.soid,
                                    'x': event.source.x,
                                    'y': event.source.y,
                                    'r': event.source.r})
@@ -33,9 +34,9 @@ class EventHandler(object):
             self.server.clients.append(event.source)
 
             self.server.broadcast({'type': 'newspaceobject',
-                                   'soid': event.source.player.ship.soid})
+                                   'soid': event.source.player.ship.soid}, event.source)
             self.server.broadcast({'type': 'sendchatmessage',
-                                   'message': 'New Player ' + str(event.source.player.id) + ' connected!'})
+                                   'message': 'New Player ' + str(event.source.player.id) + ' connected!'}, event.source)
             event.source.send({'type': 'connected'})
             for client in self.server.clients:
                 if client is not event.source:
