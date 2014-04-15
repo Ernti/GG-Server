@@ -6,5 +6,6 @@ class Player(object):
 
     def __init__(self):
         self.id = Player.dummy_id
-        ++Player.dummy_id
+        print("new player id " + str(self.id))
+        Player.dummy_id += 1
         self.ship = Ship()

@@ -6,7 +6,7 @@ class Ship(Observable):
 
     def __init__(self):
         self.soid = Ship.dummy_id
-        ++Ship.dummy_id
+        Ship.dummy_id += 1
         self.x = 0
         self.y = 0
         self.r = 0
