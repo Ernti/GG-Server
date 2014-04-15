@@ -5,15 +5,17 @@ Created on 13.12.2013
 """
 import json
 import socket
+from ggs.event import EventHandler
 
 from ggs.net.threads import AcceptConnectionThread
 
 
 class Server(object):
-
     def __init__(self):
         self.stop_requested = False
+        self.event_handler = EventHandler(self)
         self.clients = []
+        self.player = []
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
@@ -29,47 +31,15 @@ class Server(object):
             client.send("shutdown")
         self.socket.close()
 
-    def player_action(self, message, acting_client):
-        if message['type'] == 'playermoved':
-            # TODO: check if in range
-            for client in self.clients:
-                if client is not acting_client:
-                    client.send(json.dumps({'type': 'spaceobjectmoved',
-                                            'soid': self.clients.index(acting_client),
-                                            'x': message['x'],
-                                            'y': message['y'],
-                                            'scale_x': message['scale_x'],
-                                            'scale_y': message['scale_y'],
-                                            'r': message['r'],
-                                            'speed': message['speed'],
-                                            'target': message['target'],
-                                            'engine': message['engine']}))
+    def broadcast(self, message):
+        for client in self.clients:
+            client.send(message)
 
-        if message['type'] == 'removespaceobject':
-            # TODO: check if in range
-            for client in self.clients:
-                if client is not acting_client:
-                    client.send(json.dumps({'type': 'removespaceobject', 'soid': self.clients.index(acting_client)}))
+    def handle(self, message, client):
+        if message['type'] == 'playermoved':
+            client.player.ship.move(message['x'], message['y'], message['r'])
 
         if message['type'] == 'sendchatmessage':
-            for client in self.clients:
-                if client is not acting_client:
-                    client.send(json.dumps({'type': 'sendchatmessage', 'message': message['message']}))
-
-        if message['type'] == 'playershot':
-            print(message)
-            for client in self.clients:
-                if client is acting_client:
-                    client.send(json.dumps({'type': 'playershot',
-                                            'soid': -1,
-                                            'x': message['x'],
-                                            'y': message['y'],
-                                            'r': message['r'],
-                                            'speed': message['speed']}))
-                else:
-                    client.send(json.dumps({'type': 'playershot',
-                                            'soid': self.clients.index(acting_client),
-                                            'x': message['x'],
-                                            'y': message['y'],
-                                            'r': message['r'],
-                                            'speed': message['speed']}))
+            self.broadcast({'type': 'sendchatmessage',
+                            'sender': client.player.id,
+                            'message': message['message']})

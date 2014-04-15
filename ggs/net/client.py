@@ -2,6 +2,7 @@ import json
 import socket
 import re
 from threading import Thread
+from ggs.event import Observable
 
 
 class ReceiveThread(Thread):
@@ -21,39 +22,27 @@ class ReceiveThread(Thread):
                     if data:
                         self.client.handle(data_json)
                     else:
-                        self.client.handle({'type': 'removespaceobject'})
-                        self.client.alive = False
+                        self.client.fire(type='disconnected')
 
             except socket.error:
-                self.client.handle({'type': 'removespaceobject'})
-                self.client.alive = False
+                self.client.fire(type='disconnected')
 
 
-class Client(object):
+class Client(Observable):
 
     def __init__(self, server, conn, addr):
         self.server = server
         self.conn = conn
         self.addr = addr
-        self.alive = True
         self.receive_thread = ReceiveThread(self)
         self.receive_thread.start()
-
-        self.server.player_action({'type': 'sendchatmessage', 'message': 'New Player connected!'}, self)
+        Observable.__init__(self)
 
     def send(self, message):
         try:
-            self.conn.send(('(' + message + ')').encode())
+            self.conn.send(('(' + json.dumps(message) + ')').encode())
         except socket.error:
-            self.alive = False
+            self.fire(type='disconnected')
 
     def handle(self, message):
-        if message['type'] == 'playermoved':
-            self.server.player_action(message, self)
-        if message['type'] == 'removespaceobject':
-            self.server.player_action(message, self)
-        if message['type'] == 'sendchatmessage':
-            self.server.player_action(message, self)
-        if message['type'] == 'playershot':
-            self.server.player_action(message, self)
-        #print(message)
+        self.server.handle(message, self)

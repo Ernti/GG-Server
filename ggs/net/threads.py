@@ -6,7 +6,9 @@ Created on 13.12.2013
 
 import json
 from threading import Thread
-from ggs.client import Client
+
+from ggs.net.client import Client
+from ggs.player import Player
 
 
 class AcceptConnectionThread(Thread):
@@ -34,12 +36,17 @@ class LoginThread(Thread):
         data_json = self.conn.recv(1024)
         if data_json:
             data = json.loads(data_json.decode())
-            if data['username'] == "testname" \
-                        and data['password'] == "iminspace":
-
+            if data['password'] == "iminspace":
                 client = Client(self.server, self.conn, self.addr)
-                self.server.clients.append(client)
-                self.conn.send(json.dumps({'type': 'connected'}).encode())
+                client.subscribe(self.server.event_handler.handle)
+                player = Player()
+                player.ship.subscribe(self.server.event_handler.handle)
+                client.player = player
+
+                # Player will already exist at this point
+                self.server.player.append(player)
+
+                client.fire(type='connected')
             else:
-                self.conn.send(json.dumps({'type': 'loginerror'}).encode())
+                self.conn.send(('(' + json.dumps({'type': 'loginerror'}) + ')').encode())
 
