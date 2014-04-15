@@ -35,7 +35,7 @@ class EventHandler(object):
             self.server.broadcast({'type': 'newspaceobject',
                                    'soid': event.source.player.ship.soid})
             self.server.broadcast({'type': 'sendchatmessage',
-                                   'message': 'New Player ' + event.source.player.id + ' connected!'})
+                                   'message': 'New Player ' + str(event.source.player.id) + ' connected!'})
             event.source.send({'type': 'connected'})
             for client in self.server.clients:
                 if client is not event.source:
@@ -47,4 +47,4 @@ class EventHandler(object):
             self.server.broadcast({'type': 'removespaceobject',
                                    'soid': event.source.player.ship.soid})
             self.server.broadcast({'type': 'sendchatmessage',
-                                   'message': 'Player ' + event.source.player.id + ' has disconnected!'})
+                                   'message': 'Player ' + str(event.source.player.id) + ' has disconnected!'})
