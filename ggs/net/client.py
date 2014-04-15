@@ -12,7 +12,7 @@ class ReceiveThread(Thread):
         self.client = client
 
     def run(self):
-        while self.client.alive:
+        while True:
             try:
                 data = self.client.conn.recv(1024)
                 #print(data)
@@ -23,9 +23,11 @@ class ReceiveThread(Thread):
                         self.client.handle(data_json)
                     else:
                         self.client.fire(type='disconnected')
+                        break
 
             except socket.error:
                 self.client.fire(type='disconnected')
+                break
 
 
 class Client(Observable):
