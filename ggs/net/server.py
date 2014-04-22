@@ -43,4 +43,4 @@ class Server(object):
         if message['type'] == 'sendchatmessage':
             self.broadcast({'type': 'sendchatmessage',
                             'sender': client.player.id,
-                            'message': str(client.player.id) + ": " + message['message']}, client)
+                            'message': str(client.player.id) + ": " + message['message']})
