@@ -38,7 +38,7 @@ class Server(object):
 
     def handle(self, message, client):
         if message['type'] == 'playermoved':
-            client.player.ship.move(message['x'], message['y'], message['r'])
+            client.player.ship.move(message['target'])
 
         if message['type'] == 'sendchatmessage':
             self.broadcast({'type': 'sendchatmessage',
